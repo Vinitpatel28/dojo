@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PracticeDojo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dojo-dark': '#020817',
+                        'dojo-card': '#0F172A',
+                        'dojo-accent': '#38BDF8',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="bg-[#020817] text-gray-100 min-h-screen">
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-[70vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto text-center">
+            <div class="animate-title mb-8">
+                <h1 class="text-6xl md:text-7xl font-bold inline-flex">
+                    <span class="text-white">Practice</span>
+                    <span class="text-dojo-accent">Dojo</span>
+                </h1>
+            </div>
+            <div class="animate-subtitle">
+                <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                    Master your skills with comprehensive practice materials
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Main Sections Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Web Development Foundations -->
+            <div class="tech-card">
+                <div class="bg-[#0F172A] rounded-xl p-8">
+                    <h2 class="text-2xl font-bold mb-8 text-dojo-accent">Foundations of Web Development</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/html5.svg" alt="HTML" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">HTML</h3>
+                        </div>
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/css3.svg" alt="CSS" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">CSS</h3>
+                        </div>
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item col-span-2">
+                            <img src="assets/icons/javascript.svg" alt="JavaScript" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">JavaScript</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backend Development -->
+            <div class="tech-card">
+                <div class="bg-[#0F172A] rounded-xl p-8">
+                    <h2 class="text-2xl font-bold mb-8 text-dojo-accent">Backend Development with JS</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/nodejs.svg" alt="Node.js" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">Node.js</h3>
+                        </div>
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/express.svg" alt="Express.js" class="w-16 h-16 mx-auto mb-4 invert">
+                            <h3 class="text-center font-medium">Express.js</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frontend Development -->
+            <div class="tech-card">
+                <div class="bg-[#0F172A] rounded-xl p-8">
+                    <h2 class="text-2xl font-bold mb-8 text-dojo-accent">Frontend Development with JS</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/react.svg" alt="React" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">React</h3>
+                        </div>
+                        <div class="bg-[#1E293B] p-6 rounded-lg tech-item">
+                            <img src="assets/icons/Tailwind CSS.jpeg" alt="Tailwind" class="w-16 h-16 mx-auto mb-4">
+                            <h3 class="text-center font-medium">Tailwind CSS</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more sections here as needed -->
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mt-12 text-center">
+            <!-- View Papers Button -->
+            <a href="papers.html" class="inline-flex items-center px-8 py-3 bg-dojo-accent text-white rounded-lg hover:bg-dojo-accent/90 transition-all duration-300">
+                View Papers
+            </a>
+
+            <!-- Student Dashboard Button -->
+            <a href="student-dashboard.html" class="inline-flex items-center px-8 py-3 bg-dojo-accent text-white rounded-lg hover:bg-dojo-accent/90 transition-all duration-300 mt-4">
+                Go to Student Dashboard
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="py-8 px-4 text-center text-gray-400 border-t border-gray-800">
+        <p>&copy; 2025 PracticeDojo. All rights reserved.</p>
+    </footer>
+</body>
+</html>

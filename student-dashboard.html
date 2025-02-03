@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script> <!-- D3.js -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dojo-dark': '#020817',
+                        'dojo-card': '#0F172A',
+                        'dojo-accent': '#38BDF8',
+                    }
+                }
+            }
+        };
+
+        // Sample student results (Mock data)
+        const studentsResults = {
+            "2203031080139": [{ question: "Q1", marks: 85 }, { question: "Q2", marks: 90 }, { question: "Q3", marks: 78 }, { question: "Q4", marks: 88 }, { question: "Q5", marks: 95 }],
+            "2203031080140": [{ question: "Q1", marks: 75 }, { question: "Q2", marks: 85 }, { question: "Q3", marks: 80 }, { question: "Q4", marks: 90 }, { question: "Q5", marks: 85 }],
+            "2203031080142": [{ question: "Q1", marks: 92 }, { question: "Q2", marks: 78 }, { question: "Q3", marks: 88 }, { question: "Q4", marks: 76 }, { question: "Q5", marks: 94 }],
+            "2203031080143": [{ question: "Q1", marks: 68 }, { question: "Q2", marks: 74 }, { question: "Q3", marks: 82 }, { question: "Q4", marks: 79 }, { question: "Q5", marks: 87 }],
+            "2203031080144": [{ question: "Q1", marks: 81 }, { question: "Q2", marks: 85 }, { question: "Q3", marks: 79 }, { question: "Q4", marks: 83 }, { question: "Q5", marks: 88 }],
+            "2203031080145": [{ question: "Q1", marks: 73 }, { question: "Q2", marks: 82 }, { question: "Q3", marks: 90 }, { question: "Q4", marks: 86 }, { question: "Q5", marks: 92 }],
+            "2203031080146": [{ question: "Q1", marks: 95 }, { question: "Q2", marks: 89 }, { question: "Q3", marks: 84 }, { question: "Q4", marks: 91 }, { question: "Q5", marks: 97 }],
+            "2203031080147": [{ question: "Q1", marks: 77 }, { question: "Q2", marks: 83 }, { question: "Q3", marks: 81 }, { question: "Q4", marks: 88 }, { question: "Q5", marks: 84 }],
+            "2203031080148": [{ question: "Q1", marks: 85 }, { question: "Q2", marks: 87 }, { question: "Q3", marks: 89 }, { question: "Q4", marks: 84 }, { question: "Q5", marks: 91 }],
+            "2203031080149": [{ question: "Q1", marks: 70 }, { question: "Q2", marks: 78 }, { question: "Q3", marks: 85 }, { question: "Q4", marks: 80 }, { question: "Q5", marks: 86 }]
+        }; 
+
+        function displayResults() {
+            const enrollmentNumber = document.getElementById("enrollmentNumber").value.trim();
+            const resultMessage = document.getElementById("resultMessage");
+            const chartDiv = document.getElementById("chartDiv");
+            const tableDiv = document.getElementById("tableDiv");
+
+            chartDiv.innerHTML = "";
+            tableDiv.innerHTML = "";
+
+            if (studentsResults[enrollmentNumber]) {
+                const studentResults = studentsResults[enrollmentNumber];
+
+                displayResultTable(studentResults);
+                drawD3Chart(studentResults);
+
+                resultMessage.classList.add('hidden');
+            } else {
+                resultMessage.classList.remove('hidden');
+                resultMessage.innerHTML = "No results found for the given enrollment number.";
+            }
+        }
+    
+    function drawD3Chart() {
+    
+    const chartDiv = document.getElementById("chartDiv");
+    chartDiv.innerHTML = "<h3 class='text-2xl text-dojo-accent font-semibold mb-4'>Student Marks Chart</h3>";
+
+    const width = 1000, height = 600; // Increased chart size
+            
+    const margin = { top: 40, right: 150, bottom: 50, left: 50 };
+
+    const allResults = [];
+    const studentColors = {};
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    let studentIndex = 0;
+    Object.entries(studentsResults).forEach(([student, results]) => {
+        studentColors[student] = colorScale(studentIndex++);
+        results.forEach(result => allResults.push({ student, ...result }));
+    });
+
+    const x = d3.scaleBand()
+        .domain([...new Set(allResults.map(d => d.question))])
+        .range([0, width - margin.left - margin.right])
+        .padding(0.2);
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(allResults, d => d.marks)])
+        .nice()
+        .range([height - margin.top - margin.bottom, 0]);
+
+    const svg = d3.select(chartDiv)
+        .append("svg")
+        .attr("width", width + margin.right)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const groupedX = d3.scaleBand()
+        .domain(Object.keys(studentsResults))
+        .range([0, x.bandwidth()])
+        .padding(0.1);
+
+    svg.selectAll(".bar-group")
+        .data(allResults)
+        .enter().append("rect")
+        .attr("class", "bar-group")
+        .attr("x", d => x(d.question) + groupedX(d.student))
+        .attr("y", d => y(d.marks))
+        .attr("width", groupedX.bandwidth())
+        .attr("height", d => height - margin.top - margin.bottom - y(d.marks))
+        .attr("fill", d => studentColors[d.student]);
+
+    svg.append("g")
+        .attr("transform", `translate(0,${height - margin.top - margin.bottom})`)
+        .call(d3.axisBottom(x));
+
+    svg.append("g").call(d3.axisLeft(y));
+
+    // Create legend
+    const legend = svg.append("g")
+        .attr("transform", `translate(${width - margin.right + 20}, 0)`);
+
+    Object.entries(studentColors).forEach(([student, color], i) => {
+        const legendRow = legend.append("g")
+            .attr("transform", `translate(0, ${i * 20})`);
+
+        legendRow.append("rect")
+            .attr("width", 15)
+            .attr("height", 15)
+            .attr("fill", color);
+
+        legendRow.append("text")
+            .attr("x", 20)
+            .attr("y", 12)
+            .attr("fill", "#ffffff")
+            .text(student);
+    });
+}
+
+        function displayResultTable(results) {
+            const tableDiv = document.getElementById("tableDiv");
+            const totalMarks = results.reduce((sum, r) => sum + r.marks, 0);
+            const averageMarks = totalMarks / results.length;
+
+            const maxMarksPerQuestion = calculateMaxMarksPerQuestion();
+            const avgMarksPerQuestion = calculateAvgMarksPerQuestion();
+
+            let tableHTML = `
+                <h3 class="text-2xl text-dojo-accent font-semibold mb-4">Student Results</h3>
+                <table class="min-w-full bg-[#0F172A] text-gray-100 rounded-lg shadow-lg border border-gray-700">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="px-6 py-3">Paper</th>
+                            <th class="px-6 py-3">Marks</th>
+                            <th class="px-6 py-3">Max</th>
+                            <th class="px-6 py-3">Avg</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            results.forEach(result => {
+                tableHTML += `
+                    <tr class="hover:bg-gray-700">
+                        <td class="px-6 py-3">${result.question}</td>
+                        <td class="px-6 py-3">${result.marks}</td>
+                        <td class="px-6 py-3">${maxMarksPerQuestion[result.question]}</td>
+                        <td class="px-6 py-3">${avgMarksPerQuestion[result.question]}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                    <tfoot class="bg-gray-800">
+                        <tr>
+                            <td class="px-6 py-3 font-bold">Total Marks</td>
+                            <td class="px-6 py-3">${totalMarks}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-bold">Average Marks</td>
+                            <td class="px-6 py-3">${averageMarks.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+
+            tableDiv.innerHTML = tableHTML;
+        }
+
+        function calculateMaxMarksPerQuestion() {
+            const maxMarks = {};
+            Object.values(studentsResults).flat().forEach(result => {
+                if (!maxMarks[result.question] || result.marks > maxMarks[result.question]) {
+                    maxMarks[result.question] = result.marks;
+                }
+            });
+            return maxMarks;
+        }
+
+        function calculateAvgMarksPerQuestion() {
+            const totalMarks = {}, count = {}, avgMarks = {};
+            Object.values(studentsResults).flat().forEach(result => {
+                totalMarks[result.question] = (totalMarks[result.question] || 0) + result.marks;
+                count[result.question] = (count[result.question] || 0) + 1;
+            });
+            for (const question in totalMarks) {
+                avgMarks[question] = (totalMarks[question] / count[question]).toFixed(2);
+            }
+            return avgMarks;
+        }
+    </script>
+</head>
+<body class="bg-[#020817] text-gray-100 min-h-screen">
+    <section class="hero-gradient min-h-[40vh] flex items-center justify-center py-5">
+        <h1 class="text-6xl font-bold text-white">Student <span class="text-dojo-accent">Dashboard</span></h1>
+    </section>
+
+    <main class="container mx-auto py-12 text-center">
+        <div class="flex justify-center items-center gap-4 my-6">
+            <input id="enrollmentNumber" type="text" placeholder="Enter Enrollment Number" class="px-4 py-2 w-64 text-lg text-black rounded-lg border border-gray-300 focus:ring-2 focus:ring-dojo-accent">
+            <button onclick="displayResults()" class="px-6 py-2 text-lg font-semibold bg-dojo-accent text-white rounded-lg hover:bg-blue-500">Get Results</button>
+        </div>
+
+        <div id="resultMessage" class="text-red-500 hidden"></div>
+        <div id="tableDiv"></div>
+        <div class="flex justify-center items-center">
+            <div id="chartDiv"></div>
+            
+        </div>
+        
+    </main>
+</body>
+</html>
